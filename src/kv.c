@@ -5,7 +5,8 @@
 
 size_t Hash(const char*val, size_t capacity)
 {
-    size_t hash = 0x0123456789abcdef;
+    //size_t hash = 0x0123456789abcdef;
+    size_t hash = 0x13371337deadbeef;
 
     while (*val) {
         hash ^= *val;
