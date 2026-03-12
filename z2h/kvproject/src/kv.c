@@ -133,6 +133,7 @@ int kv_delete(kv_t *db, const char*key)
 
 void kv_free(kv_t *db)
 {
+    if(!db) return;
     for(size_t i = 0; i < db->capacity; i++)
     {
         kv_entry_t *e = &db->entries[i];
