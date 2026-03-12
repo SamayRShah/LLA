@@ -39,7 +39,7 @@ int kv_put(kv_t *db, const char*key, const char*value)
 
     size_t idx = Hash(key, db->capacity);
 
-    for(size_t i = 0; i < db->capacity; i++)
+    for(size_t i = 0; i < db->capacity - 1; i++)
     {
         size_t real_idx = (idx + i) % db->capacity;
         kv_entry_t *entry = &db->entries[real_idx];
