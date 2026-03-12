@@ -10,7 +10,7 @@ size_t Hash(const char*val, size_t capacity)
 
     while (*val) {
         hash ^= *val;
-        hash <<= 8;
+        hash = hash << 8;
         hash += *val;
         val++;
     }
@@ -39,7 +39,7 @@ int kv_put(kv_t *db, const char*key, const char*value)
 
     size_t idx = Hash(key, db->capacity);
 
-    for(size_t i = 0; i < db->capacity - 1; i++)
+    for(size_t i = 0; i < db->capacity; i++)
     {
         size_t real_idx = (idx + i) % db->capacity;
         kv_entry_t *entry = &db->entries[real_idx];
