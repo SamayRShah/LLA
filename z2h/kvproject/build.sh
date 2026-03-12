@@ -1,0 +1,1 @@
+gcc -o ./bin/test -I./inc src/*.c -g -Wall
