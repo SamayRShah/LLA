@@ -53,7 +53,7 @@ int kv_put(kv_t *db, const char*key, const char*value)
             if(!newVal) return -1;
             free(entry->value);
             entry->value = newVal;
-            return real_idx;
+            return 0;
         }
 
         // land in empty slot
@@ -69,7 +69,7 @@ int kv_put(kv_t *db, const char*key, const char*value)
             entry->key = newKey;
             entry->value = newVal;
             db->count++;
-            return real_idx;
+            return 0;
         }
     }
 
