@@ -1,25 +1,27 @@
 #include <stdio.h>
+#include <assert.h>
+#include <string.h>
 #include <kv.h>
 
 int tmain()
 {
-    kv_t *table = kv_init(1024);
-    printf("%p\n", table);
-    printf("%lu\n", table->capacity);
+    kv_t *db = kv_init(16);
 
-    kv_put(table, "color", "haha");
-    kv_put(table, "hehe", "hoho");
-    kv_put(table, "lala", "hehehe");
+    kv_put(db, "name", "alice");
+    assert(strcmp(kv_get(db, "name"), "alice") == 0);
+    assert(kv_get(db, "missing") == NULL);
 
-    for(size_t i = 0; i < table->capacity; i++)
+    for(size_t i = 0; i < db->capacity; i++)
     {
-        if(table->entries[i].key)
+        if(db->entries[i].key)
         {
             printf("[%lu] %s: %s\n", 
                 i,
-                table->entries[i].key,
-                table->entries[i].value
+                db->entries[i].key,
+                db->entries[i].value
             );
         }
     }
+
+    kv_free(db);
 }
