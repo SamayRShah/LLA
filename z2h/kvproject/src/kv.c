@@ -1,4 +1,20 @@
+#include <stdlib.h>
+#include <string.h>
+
 #include <kv.h>
+
+size_t Hash(const char*val, size_t capacity)
+{
+    size_t hash = 0x0123456789abcdef;
+
+    while (*val) {
+        hash ^= *val;
+        hash <<= 8;
+        hash += *val;
+        val++;
+    }
+    return hash % capacity;
+}
 
 kv_t *kv_init(size_t capacity)
 {
@@ -16,9 +32,51 @@ kv_t *kv_init(size_t capacity)
     return table;
 }
 
-int kv_put(kv_t *db, const char *key, const char *value) { return -1; }
-char *kv_get(kv_t *db, const char *key) { return NULL; }
-int kv_delete(kv_t *db, const char *key) { return -1; }
+int kv_put(kv_t *db, const char*key, const char*value) 
+{
+    if(!db | !key | !value) return -1;
+
+    size_t idx = Hash(key, db->capacity);
+
+    for(size_t i = 0; i < db->capacity; i++)
+    {
+        size_t real_idx = (idx + i) % db->capacity;
+        kv_entry_t *entry = &db->entries[real_idx];
+
+        // key is set -> updating
+        if(entry->key && !strcmp(entry->key, key)
+            && entry->key != (void*)TOMBSTONE)
+        {
+            // allocate new val in heap
+            char *newVal = strdup(value);
+            if(!newVal) return -1;
+            entry->value = newVal;
+            return real_idx;
+        }
+
+        // land in empty slot
+        if(!entry->key || entry->key == (void*)TOMBSTONE)
+        {
+            // allocate new val in heap
+            char *newVal = strdup(value);
+            char *newKey = strdup(key);
+            if(!newVal || !newKey) {
+                free(newKey); free(newVal);
+                return -1;
+            }
+            entry->key = newKey;
+            entry->value = newVal;
+            db->count++;
+            return real_idx;
+        }
+    }
+
+    // db is full
+    return -2;
+}
+
+char *kv_get(kv_t *db, const char*key) { return NULL; }
+int kv_delete(kv_t *db, const char*key) { return -1; }
 
 void kv_free(kv_t *db)
 {
