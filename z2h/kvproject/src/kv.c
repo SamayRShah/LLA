@@ -34,7 +34,7 @@ kv_t *kv_init(size_t capacity)
 
 int kv_put(kv_t *db, const char*key, const char*value) 
 {
-    if(!db | !key | !value) return -1;
+    if(!db || !key || !value) return -1;
 
     size_t idx = Hash(key, db->capacity);
 
@@ -44,18 +44,19 @@ int kv_put(kv_t *db, const char*key, const char*value)
         kv_entry_t *entry = &db->entries[real_idx];
 
         // key is set -> updating
-        if(entry->key && !strcmp(entry->key, key)
-            && entry->key != (void*)TOMBSTONE)
+        if(entry->key && entry->key != TOMBSTONE 
+            && !strcmp(entry->key, key))
         {
             // allocate new val in heap
             char *newVal = strdup(value);
             if(!newVal) return -1;
+            free(entry->value);
             entry->value = newVal;
             return real_idx;
         }
 
         // land in empty slot
-        if(!entry->key || entry->key == (void*)TOMBSTONE)
+        if(!entry->key || entry->key == TOMBSTONE)
         {
             // allocate new val in heap
             char *newVal = strdup(value);
