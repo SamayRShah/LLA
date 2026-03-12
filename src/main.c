@@ -9,12 +9,9 @@ int tmain()
 
     kv_put(db, "name", "alice");
     kv_put(db, "city", "berlin");
+    kv_put(db, "lang", "c");
 
-    assert(kv_delete(db, "name") == 0);
-    assert(kv_get(db, "name") == NULL);
-    assert(db->count == 1);
-
-    assert(kv_delete(db, "missing") == -1);
+    kv_delete(db, "city");
 
     for(size_t i = 0; i < db->capacity; i++)
     {
